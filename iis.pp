@@ -3,7 +3,7 @@ Package{
   provider => 'chocolatey',
 }
 
-include chocolatey
+#include chocolatey
 
 reboot{'dsc_reboot':
   when    => pending,
@@ -11,7 +11,7 @@ reboot{'dsc_reboot':
 }
 
 package{'dotnet4.5.2':
-  notify   => Reboot['dsc_reboot'],
+  notify => Reboot['dsc_reboot'],
 }->
 
 package{'powershell':
@@ -35,29 +35,23 @@ dsc_windowsfeature{'aspnet45':
 }->
 
 dsc_xwebsite{'defaultsite':
-  dsc_ensure       => 'Present',
+  dsc_ensure       => 'Absent',
   dsc_name         => 'Default Web Site',
-  dsc_state        => 'Stopped',
   dsc_physicalpath => 'C:\\inetpub\\wwwroot',
 }->
 
 dsc_file{'websitefolder':
   dsc_ensure          => 'present',
-  dsc_sourcepath      => 'c:\\vagrant\\website_code',
+  dsc_sourcepath      => 'c:\\vagrant\\artifacts\\website_code',
   dsc_destinationpath => 'c:\\inetpub\\foo',
   dsc_recurse         => true,
   dsc_type            => 'Directory',
 }->
 
 dsc_xwebapppool{'newwebapppool':
-  dsc_name                      => 'PuppetCodezAppPool',
-  dsc_ensure                    => 'Present',
-  dsc_managedruntimeversion     => 'v4.0',
-  dsc_logeventonrecycle         => 'Memory',
-  dsc_restartmemorylimit        => '1000',
-  dsc_restartprivatememorylimit => '1000',
-  dsc_identitytype              => 'ApplicationPoolIdentity',
-  dsc_state                     => 'Started',
+  dsc_name   => 'PuppetCodezAppPool',
+  dsc_ensure => 'Present',
+  dsc_state  => 'Started',
 }->
 
 dsc_xwebsite{'newwebsite':
@@ -66,8 +60,8 @@ dsc_xwebsite{'newwebsite':
   dsc_state           => 'Started',
   dsc_physicalpath    => 'c:\\inetpub\\foo',
   dsc_applicationpool => 'PuppetCodezAppPool',
-  dsc_bindinginfo     => [{
+  dsc_bindinginfo     => {
     protocol => 'HTTP',
     port     => 80,
-  }]
+  }
 }
