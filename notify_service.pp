@@ -5,15 +5,9 @@ dsc_package{ 'fooproduct':
   dsc_path      => "c:\\vagrant\\artifacts\\foosetup.msi",
 }
 
-service { 'fooservice':
-  ensure  => 'running',
-  enable  => true,
-  require => Dsc_package['fooproduct'],
-}
-
 file { 'c:\Program Files (x86)\FooProduct\fooservice.exe.config':
-  notify  => Service['fooservice'],
   require => Dsc_package['fooproduct'],
+  notify  => Service['fooservice'],
   content => @(APPCONFIG)
   <?xml version="1.0" encoding="utf-8"?>
   <configuration>
@@ -22,4 +16,10 @@ file { 'c:\Program Files (x86)\FooProduct\fooservice.exe.config':
     </appSettings>
   </configuration>
   |- APPCONFIG
+}
+
+service { 'fooservice':
+  require => Dsc_package['fooproduct'],
+  ensure  => 'running',
+  enable  => true,
 }

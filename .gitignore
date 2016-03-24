@@ -1,2 +1,3 @@
 *.msu
 .vagrant
+.DS_Store

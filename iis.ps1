@@ -24,7 +24,7 @@ Configuration InstallIIS
   WindowsFeature aspnet45 {
     Ensure    = 'Present'
     Name      = 'Web-Asp-Net45'
-    DependsOn = @("[WindowsFeature]iisscriptingtools")
+    DependsOn = @("[WindowsFeature]iis")
   }
   
   xWebsite defaultsite {
@@ -37,7 +37,7 @@ Configuration InstallIIS
   
   File websitefolder {
     Ensure          = 'present'
-    SourcePath      = 'c:\vagrant\website_code'
+    SourcePath      = 'C:\vagrant\artifacts\website_code'
     DestinationPath = 'c:\inetpub\foo'
     Recurse         = $true
     Type            = 'Directory'
@@ -53,9 +53,9 @@ Configuration InstallIIS
     RestartPrivateMemoryLimit = '1000'
     IdentityType              = 'ApplicationPoolIdentity'
     State                     = 'Started'
-    DependsOn                 = @("WindowsFeature[iis]",
-                                  "WindowsFeature[aspnet45]",
-                                  "cChocoPackageInstaller[dotnet452]")
+    DependsOn                 = @("[WindowsFeature]iis",
+                                  "[WindowsFeature]aspnet45",
+                                  "[cChocoPackageInstaller]dotnet452")
   }
   
   xWebsite newwebsite {
@@ -68,11 +68,11 @@ Configuration InstallIIS
       Protocol = 'HTTP'
       Port     = 80
     }
-    DependsOn = @("WindowsFeature[iis]",
-                  "WindowsFeature[aspnet45]",
-                  "cChocoPackageInstaller[dotnet452]",
-                  "File[websitefolder]",
-                  "xWebAppPool[newwebapppool]")
+    DependsOn = @("[WindowsFeature]iis",
+                  "[WindowsFeature]aspnet45",
+                  "[cChocoPackageInstaller]dotnet452",
+                  "[File]websitefolder",
+                  "[xWebAppPool]newwebapppool")
   }
 }
 
